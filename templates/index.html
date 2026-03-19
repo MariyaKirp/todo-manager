@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Менеджер</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Мои задачи</h1>
+        <form action="/add" method="POST" class="add-form">
+            <input type="text" name="title" placeholder="Введите задачу..." required>
+            <button type="submit">Добавить</button>
+        </form>
+        <ul class="task-list">
+            {% for task in tasks %}
+            <li class="task-item {% if task.done %}done{% endif %}">
+                <a href="/done/{{ task.id }}" class="checkbox">
+                    {% if task.done %}✓{% else %}☐{% endif %}
+                </a>
+                <span>{{ task.title }}</span>
+                <a href="/delete/{{ task.id }}" class="delete-btn">Удалить</a>
+            </li>
+            {% else %}
+            <li class="empty">Задач пока нет. Добавьте первую!</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
