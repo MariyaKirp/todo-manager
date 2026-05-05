@@ -2,30 +2,74 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do Менеджер</title>
+    <title>To-Do Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Мои задачи</h1>
-        <form action="/add" method="POST" class="add-form">
-            <input type="text" name="title" placeholder="Введите задачу..." required>
+        <h1>To-Do Manager</h1>
+        <p class="subtitle">Веб-приложение для управления личными задачами с использованием микросервисов</p>
+
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ stats.total }}</span>
+                <span class="stat-label">Всего задач</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ stats.completed }}</span>
+                <span class="stat-label">Выполнено</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ stats.active }}</span>
+                <span class="stat-label">Активные</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ stats.high_priority }}</span>
+                <span class="stat-label">Важные</span>
+            </div>
+        </div>
+
+        <form action="{{ url_for('add_task') }}" method="POST" class="task-form">
+            <input type="text" name="title" placeholder="Введите новую задачу" required>
             <button type="submit">Добавить</button>
         </form>
-        <ul class="task-list">
-            {% for task in tasks %}
-            <li class="task-item {% if task.done %}done{% endif %}">
-                <a href="/done/{{ task.id }}" class="checkbox">
-                    {% if task.done %}✓{% else %}☐{% endif %}
-                </a>
-                <span>{{ task.title }}</span>
-                <a href="/delete/{{ task.id }}" class="delete-btn">Удалить</a>
-            </li>
+
+        <div class="task-list">
+            {% if tasks %}
+                {% for task in tasks %}
+                    <div class="task-item {% if task.completed %}completed{% endif %}">
+                        <div class="task-info">
+                            <span class="task-title">{{ task.title }}</span>
+                            <span class="priority {{ task.priority }}">
+                                {% if task.priority == "high" %}
+                                    высокий приоритет
+                                {% else %}
+                                    обычный приоритет
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div class="task-actions">
+                            <form action="{{ url_for('complete_task', task_id=task.id) }}" method="POST">
+                                <button type="submit" class="complete-btn">
+                                    {% if task.completed %}
+                                        Вернуть
+                                    {% else %}
+                                        Выполнено
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                            <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST">
+                                <button type="submit" class="delete-btn">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
             {% else %}
-            <li class="empty">Задач пока нет. Добавьте первую!</li>
-            {% endfor %}
-        </ul>
+                <p class="empty">Пока задач нет. Добавьте первую задачу.</p>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
