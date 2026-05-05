@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  todo-app:
+    build: .
+    container_name: todo-app
+    ports:
+      - "5000:5000"
+    environment:
+      - PRIORITY_SERVICE_URL=http://priority-service:5001
+      - STATS_SERVICE_URL=http://stats-service:5002
+    depends_on:
+      - priority-service
+      - stats-service
+    volumes:
+      - todo-data:/app/instance
+
+  priority-service:
+    build: ./priority-service
+    container_name: priority-service
+    ports:
+      - "5001:5001"
+
+  stats-service:
+    build: ./stats-service
+    container_name: stats-service
+    ports:
+      - "5002:5002"
+
+volumes:
+  todo-data:
