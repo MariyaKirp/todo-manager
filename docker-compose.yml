@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  todo-app:
+    build: ./app
+    container_name: todo-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - priority-service
+      - stats-service
+
+  priority-service:
+    build: ./priority_service
+    container_name: priority-service
+    ports:
+      - "5001:5001"
+
+  stats-service:
+    build: ./stats_service
+    container_name: stats-service
+    ports:
+      - "5002:5002"
