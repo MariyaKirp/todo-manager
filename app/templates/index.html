@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <section class="todo-card">
+            <header class="header">
+                <h1>To-Do Manager</h1>
+                <p><p>Простой и удобный сервис для планирования повседневных задач</p></p>
+            </header>
+
+            <section class="stats">
+                <div class="stat-card">
+                    <strong>{{ stats.total }}</strong>
+                    <span>Всего задач</span>
+                </div>
+
+                <div class="stat-card">
+                    <strong>{{ stats.completed }}</strong>
+                    <span>Выполнено</span>
+                </div>
+
+                <div class="stat-card">
+                    <strong>{{ stats.active }}</strong>
+                    <span>Активные</span>
+                </div>
+
+                <div class="stat-card">
+                    <strong>{{ important }}</strong>
+                    <span>Важные</span>
+                </div>
+            </section>
+
+            <form action="/add" method="post" class="add-form">
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Введите новую задачу"
+                    required
+                >
+                <button type="submit">Добавить</button>
+            </form>
+
+            <section class="task-list">
+                {% if tasks %}
+                    {% for task in tasks %}
+                        <article class="task-item {% if task.completed %}task-item--completed{% endif %}">
+                            <div class="task-info">
+                                <p class="task-title">{{ task.title }}</p>
+
+                                <span class="priority {% if task.priority == 'высокий' %}priority--high{% else %}priority--normal{% endif %}">
+                                    {% if task.priority == 'высокий' %}
+                                        высокий приоритет
+                                    {% else %}
+                                        обычный приоритет
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <div class="task-actions">
+                                <form action="/complete/{{ task.id }}" method="post">
+                                    <button class="button button--complete" type="submit">
+                                        {% if task.completed %}
+                                            Вернуть
+                                        {% else %}
+                                            Выполнено
+                                        {% endif %}
+                                    </button>
+                                </form>
+
+                                <form action="/delete/{{ task.id }}" method="post">
+                                    <button class="button button--delete" type="submit">
+                                        Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <p>Задач пока нет. Добавьте первую задачу.</p>
+                    </div>
+                {% endif %}
+            </section>
+        </section>
+    </main>
+</body>
+</html>
